@@ -41,4 +41,4 @@ export const createRepairRequestSchema = z.object({
     preferredTime: z.string().optional(),
 });
 
-export type CreateRepairRequestInputDto = z.infer<typeof createRepairRequestSchema>;
+export type CreateRepairRequestDto = z.infer<typeof createRepairRequestSchema>;
