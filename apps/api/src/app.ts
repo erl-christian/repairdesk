@@ -1,5 +1,6 @@
 import express from "express"
 import cors from "cors"
+import repairRequestRoutes from "./routes/repair-request.route"
 
 const app = express()
 
@@ -11,7 +12,10 @@ app.get("/health", (_req, res) => {
         success: true,
         message: "Hello RepairDesk" 
     })
-
 })
+
+app.use("/api/v1/repair-requests", repairRequestRoutes)
+
+
 
 export default app

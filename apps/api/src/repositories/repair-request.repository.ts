@@ -15,7 +15,7 @@ export class RepairRequestRepository {
     async findByTicketNumber(ticketNumber: string){
         return prisma.repairRequest.findUnique({
             where: {
-                publickTicketNumber: ticketNumber,
+                publicTicketNumber: ticketNumber,
             }
         })
     }

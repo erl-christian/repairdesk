@@ -13,7 +13,7 @@ export class RepairRequestService {
     
     }
 
-    async create(
+    async createRepairRequest(
         data: CreateRepairRequestDto
     ) {
         const publicTicketNumber = this.generateTicketNumber()
