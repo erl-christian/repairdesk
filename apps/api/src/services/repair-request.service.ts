@@ -27,4 +27,20 @@ export class RepairRequestService {
     async findByTicketNumber(ticketNumber: string) {
         return await this.repository.findByTicketNumber(ticketNumber)
     }
+
+    async trackRepairRequest(
+        ticketNumber: string,
+        phoneNumber: string,
+    ) {
+        const repairRequest = await this.repository.findForTracking(
+            ticketNumber,
+            phoneNumber,
+        )
+
+        if(!repairRequest){
+            throw new Error("Invalid ticket number or phone number")
+        }
+
+        return repairRequest
+    }
 }

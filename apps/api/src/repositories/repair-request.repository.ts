@@ -20,4 +20,16 @@ export class RepairRequestRepository {
         })
     }
 
+    async findForTracking(
+        ticketNumber: string,
+        phoneNumber: string,
+    ) {
+        return prisma.repairRequest.findFirst({
+            where: {
+                publicTicketNumber: ticketNumber,
+                phoneNumber,
+            },
+        })
+    }
+
 }
