@@ -32,4 +32,30 @@ export class RepairRequestRepository {
         })
     }
 
+    async findAll(){
+        return prisma.repairRequest.findMany({
+            select: {
+                publicTicketNumber: true,
+                customerName: true,
+                deviceType: true,
+                deviceBrand: true,
+                deviceModel: true,
+                problemDescription: true,
+                createdAt: true,
+                status: true,
+            },
+            orderBy: {
+                createdAt: "desc",
+            }
+        })
+    }
+
+    async findById(id: string){
+        return prisma.repairRequest.findUnique({
+            where: {
+                id,
+            },
+        })
+    }
+
 }

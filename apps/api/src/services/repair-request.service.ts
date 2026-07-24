@@ -43,4 +43,19 @@ export class RepairRequestService {
 
         return repairRequest
     }
+
+    async getAllRepairRequest(){
+        return this.repository.findAll()
+    }
+
+    async getRepairRequestById(id: string){
+        const repairRequest = await this.repository.findById(id)
+
+        if(!repairRequest){
+            throw new Error("Repair Request not found")
+        }
+
+        return repairRequest
+    }
+
 }

@@ -52,4 +52,38 @@ export class RepairRequestController {
         } 
     }
 
+    async findAll(req: Request, res: Response) {
+        try{
+            const repairRequests = await repairRequestService.getAllRepairRequest()
+            return res.status(200).json({
+                success: true,
+                data: repairRequests,
+            })
+            
+        } catch (e) { 
+            return res.status(500).json({
+                success: false,
+                message: "Repair requests not found",
+                error: e,
+            })
+        }
+    }
+
+    async findOne(req: Request, res: Response) {
+        try{
+            const repairRequest = await repairRequestService.getRepairRequestById(req.params.id)
+            
+            return res.status(200).json({
+                success: true,
+                data: repairRequest,
+            })
+        } catch (e) {
+            return res.status(500).json({
+                success: false,
+                message: "Repair request not found",
+                error: e,
+            })
+        }
+    }
+
 }
