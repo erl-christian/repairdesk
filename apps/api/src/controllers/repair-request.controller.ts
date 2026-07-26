@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import { createRepairRequestSchema } from "../validators/repair-request.validator"
 import { RepairRequestService } from "../services/repair-request.service"
 import { trackRepairSchema } from "../validators/track-repair.validator"
+import { updateRepairStatusSchema } from "../validators/update-repair.validator"
 
 const repairRequestService = new RepairRequestService()
 
@@ -71,7 +72,7 @@ export class RepairRequestController {
 
     async findOne(req: Request, res: Response) {
         try{
-            const repairRequest = await repairRequestService.getRepairRequestById(req.params.id)
+            const repairRequest = await repairRequestService.getRepairRequestById(req.params.id as string)
             
             return res.status(200).json({
                 success: true,
@@ -81,6 +82,25 @@ export class RepairRequestController {
             return res.status(500).json({
                 success: false,
                 message: "Repair request not found",
+                error: e,
+            })
+        }
+    }
+
+    async updateStatus(req: Request, res: Response) {
+        try{
+            const { status } = updateRepairStatusSchema.parse(req.body)
+            const repairRequest = await repairRequestService.updateRepairStatus(req.params.id as string, status)
+
+            return res.status(200).json({
+                success: true,
+                message: "Repair status updated succesfully",
+                data: repairRequest
+            })
+        }catch (e) {
+            return res.status(400).json({
+                success: false,
+                message: "Invalid request data",
                 error: e,
             })
         }

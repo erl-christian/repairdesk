@@ -1,3 +1,4 @@
+import { RepairStatus } from "../generated/prisma/enums";
 import { RepairRequestRepository } from "../repositories/repair-request.repository"
 import { CreateRepairRequestDto } from "../validators/repair-request.validator";
 
@@ -56,6 +57,13 @@ export class RepairRequestService {
         }
 
         return repairRequest
+    }
+
+    async updateRepairStatus(id: string, status: RepairStatus){
+        await this.getRepairRequestById(id)
+
+        return this.repository.updateStatus(id, status)
+    
     }
 
 }
