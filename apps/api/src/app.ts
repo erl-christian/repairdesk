@@ -1,6 +1,8 @@
 import express from "express"
 import cors from "cors"
 import repairRequestRoutes from "./routes/repair-request.route"
+import dashboardroutes from "./routes/dashboard.routes"
+
 
 const app = express()
 
@@ -15,6 +17,10 @@ app.get("/health", (_req, res) => {
 })
 
 app.use("/api/v1/repair-requests", repairRequestRoutes)
+app.use("/api/v1/dashboard", dashboardroutes)
+
+app.listen(3000)
+
 
 
 

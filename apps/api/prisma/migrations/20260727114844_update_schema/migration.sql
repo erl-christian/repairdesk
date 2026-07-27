@@ -1,0 +1,2 @@
+-- AlterEnum
+ALTER TYPE "RepairStatus" ADD VALUE 'READY_FOR_PICKUP';
