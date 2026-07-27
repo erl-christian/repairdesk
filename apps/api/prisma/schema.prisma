@@ -1,0 +1,51 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RepairStatus {
+  PENDING_REVIEW
+  ACCEPTED
+  IN_PROGRESS
+  WAITING_PARTS
+  READY_FOR_PICKUP
+  COMPLETED
+  CANCELLED
+}
+
+enum ServiceMethod {
+  TECHNICIAN_VISITS_CUSTOMER
+  CUSTOMER_VISITS_TECHNICIAN
+}
+
+model RepairRequest {
+  id                  String          @id @default(uuid())
+
+  publicTicketNumber  String          @unique
+
+  customerName        String
+  phoneNumber         String
+  email               String?
+
+  deviceType          String
+  deviceBrand         String?
+  deviceModel         String?
+
+  problemDescription  String
+
+  serviceMethod       ServiceMethod
+
+  municipality        String
+
+  preferredDate       DateTime?
+  preferredTime       String?
+
+  status              RepairStatus    @default(PENDING_REVIEW)
+
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+}
