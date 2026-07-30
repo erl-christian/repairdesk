@@ -1,6 +1,7 @@
 import { prisma } from "../database/prisma";
 import { RepairStatus } from "../generated/prisma/enums";
 import { CreateRepairRequestDto } from "../validators/repair-request.validator";
+import { RepairRequestQuery } from "../types/query";
 
 export class RepairRequestRepository {
   async create(
@@ -30,22 +31,33 @@ export class RepairRequestRepository {
     });
   }
 
-  async findAll() {
-    return prisma.repairRequest.findMany({
-      select: {
-        publicTicketNumber: true,
-        customerName: true,
-        deviceType: true,
-        deviceBrand: true,
-        deviceModel: true,
-        problemDescription: true,
-        createdAt: true,
-        status: true,
-      },
-      orderBy: {
-        createdAt: "desc",
-      },
-    });
+  async findAll(query: RepairRequestQuery) {
+    const page = query.page ?? 1
+    const limit = query.limit ?? 10
+
+    const skip = (page - 1) * limit
+
+    const [repairRequests, totalItems] = await Promise.all([
+      prisma.repairRequest.findMany({
+        skip,
+        take: limit,
+        orderBy: {
+          createdAt: "desc",
+        },
+      }),
+      prisma.repairRequest.count(),
+    ])
+
+    return {
+      repairRequests,
+      pagination: {
+        page,
+        limit,
+        totalItems,
+        totalPages: Math.ceil(totalItems / limit),
+      }
+    }
+
   }
 
   async findById(id: string) {

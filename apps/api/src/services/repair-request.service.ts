@@ -1,5 +1,6 @@
 import { RepairStatus } from "../generated/prisma/enums";
 import { RepairRequestRepository } from "../repositories/repair-request.repository"
+import { RepairRequestQuery } from "../types/query";
 import { CreateRepairRequestDto } from "../validators/repair-request.validator";
 
 export class RepairRequestService {
@@ -45,8 +46,8 @@ export class RepairRequestService {
         return repairRequest
     }
 
-    async getAllRepairRequest(){
-        return this.repository.findAll()
+    async getAllRepairRequest(query: RepairRequestQuery){
+        return this.repository.findAll(query)
     }
 
     async getRepairRequestById(id: string){

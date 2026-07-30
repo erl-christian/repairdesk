@@ -3,6 +3,7 @@ import { createRepairRequestSchema } from "../validators/repair-request.validato
 import { RepairRequestService } from "../services/repair-request.service"
 import { trackRepairSchema } from "../validators/track-repair.validator"
 import { updateRepairStatusSchema } from "../validators/update-repair.validator"
+import { repairRequestQuerySchema } from "../validators/repair-request-query.validator"
 
 const repairRequestService = new RepairRequestService()
 
@@ -55,10 +56,16 @@ export class RepairRequestController {
 
     async findAll(req: Request, res: Response) {
         try{
-            const repairRequests = await repairRequestService.getAllRepairRequest()
+            const page = Number(req.query.page)
+            const limit = Number(req.query.limit)
+
+            const query = repairRequestQuerySchema.parse(req.query);
+            
+            const result = await repairRequestService.getAllRepairRequest(query)
+
             return res.status(200).json({
                 success: true,
-                data: repairRequests,
+                ...result,
             })
             
         } catch (e) { 
