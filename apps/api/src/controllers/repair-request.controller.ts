@@ -56,11 +56,7 @@ export class RepairRequestController {
 
     async findAll(req: Request, res: Response) {
         try{
-            const page = Number(req.query.page)
-            const limit = Number(req.query.limit)
-
             const query = repairRequestQuerySchema.parse(req.query);
-            
             const result = await repairRequestService.getAllRepairRequest(query)
 
             return res.status(200).json({

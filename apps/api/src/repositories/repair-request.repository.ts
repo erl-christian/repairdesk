@@ -39,52 +39,59 @@ export class RepairRequestRepository {
 
     const skip = (page - 1) * limit
 
-    const search = query.search
+    const { search, status } = query
 
-   const where = search ? {
-        OR: [
-          {
-            customerName: {
-              contains: search,
-              mode: Prisma.QueryMode.insensitive,
-            },
-          },
-          {
-            publicTicketNumber: {
-              contains: search,
-              mode: Prisma.QueryMode.insensitive,
-            },
-          },
-          {
-            phoneNumber: {
-              contains: search,
-              mode: Prisma.QueryMode.insensitive,
-            },
-          },
-          {
-            deviceBrand: {
-              contains: search,
-              mode: Prisma.QueryMode.insensitive,
-            },
-          },
-          {
-            deviceModel: {
-              contains: search,
-              mode: Prisma.QueryMode.insensitive,
-            },
-          },
-        ],
-      }
-    : {};
+    const where: Prisma.RepairRequestWhereInput = {}
+
+    const orderBy = { [query.sortBy ?? "createdAt"]: query.sortOrder ?? "desc", }
+
+    if(search){
+    where.OR = [
+      {
+        customerName: {
+          contains: search,
+          mode: Prisma.QueryMode.insensitive,
+        },
+      },
+      {
+        publicTicketNumber: {
+          contains: search,
+          mode: Prisma.QueryMode.insensitive,
+        },
+      },
+      {
+        phoneNumber: {
+          contains: search,
+          mode: Prisma.QueryMode.insensitive,
+        },
+      },
+      {
+        deviceBrand: {
+          contains: search,
+          mode: Prisma.QueryMode.insensitive,
+        },
+      },
+      {
+        deviceModel: {
+          contains: search,
+          mode: Prisma.QueryMode.insensitive,
+        },
+      },
+    ]
+    }
+
+    if(status){
+      where.status = status
+    }
+
+
 
     const [repairRequests, totalItems] = await Promise.all([
       prisma.repairRequest.findMany({
         where,
         skip,
         take: limit,
-        orderBy: {
-          createdAt: "desc",
-        },
+        orderBy,
       }),
       prisma.repairRequest.count({
         where,
