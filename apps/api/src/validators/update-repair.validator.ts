@@ -1,14 +1,7 @@
-import { z } from "zod"
+import { z } from "zod";
+import { RepairStatus } from "../generated/prisma/enums";
 
 export const updateRepairStatusSchema = z.object({
-    status: z.enum([
-        "PENDING_REVIEW",
-        "ACCEPTED",
-        "IN_PROGRESS",
-        "WAITING_PARTS",
-        "COMPLETED",
-        "CANCELLED",
-    ])
-})
-
-export type UpdateRepairStatusDto = z.infer<typeof updateRepairStatusSchema>
+  status: z.nativeEnum(RepairStatus),
+  note: z.string().trim().optional(),
+});
