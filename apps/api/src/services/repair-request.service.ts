@@ -3,9 +3,14 @@ import { RepairRequestRepository } from "../repositories/repair-request.reposito
 import { RepairRequestQuery } from "../types/query";
 import { repairTimelineService } from "./repair-timeline.service";
 import { CreateRepairRequestDto } from "../validators/repair-request.validator";
+import { uploadBuffer } from "../services/repair-image.service";
+import { RepairImageRepository } from "../repositories/repair-image.repository";
+
 
 export class RepairRequestService {
   private repository = new RepairRequestRepository();
+
+  private imageRepository = new RepairImageRepository();
 
   private generateTicketNumber() {
     const year = new Date().getFullYear();
@@ -15,7 +20,7 @@ export class RepairRequestService {
     return `RD-BHL-${year}-${random}`;
   }
 
-  async createRepairRequest(data: CreateRepairRequestDto) {
+  async createRepairRequest(data: CreateRepairRequestDto, files: Express.Multer.File[]) {
     const publicTicketNumber = this.generateTicketNumber();
 
     const repairRequest = await this.repository.create({
@@ -23,6 +28,18 @@ export class RepairRequestService {
       publicTicketNumber,
     });
 
+    if (files && files.length > 0) {
+      const urls: string[] = [];
+      for (const file of files) {
+        const url = await uploadBuffer(file.buffer);
+        urls.push(url);
+      }
+      await this.imageRepository.createMany(
+        repairRequest.id,
+        urls,
+        "CUSTOMER" 
+      );
+    }
     await repairTimelineService.createTimeline(
       repairRequest.id,
       repairRequest.status,

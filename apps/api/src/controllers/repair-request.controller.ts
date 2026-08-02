@@ -11,8 +11,11 @@ export class RepairRequestController {
   async create(req: Request, res: Response) {
     try {
       const validateData = createRepairRequestSchema.parse(req.body);
-      const repairRequest =
-        await repairRequestService.createRepairRequest(validateData);
+      const files = req.files as Express.Multer.File[];
+      const repairRequest = await repairRequestService.createRepairRequest(
+        validateData,
+        files
+      );
       return res.status(201).json({
         success: true,
         message: "Repair Request submitted succesfully",

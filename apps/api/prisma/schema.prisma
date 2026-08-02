@@ -22,6 +22,11 @@ enum ServiceMethod {
   CUSTOMER_VISITS_TECHNICIAN
 }
 
+enum AttachmentUploader{
+    CUSTOMER
+    ADMIN
+}
+
 model RepairRequest {
   id                  String          @id @default(uuid())
 
@@ -46,6 +51,7 @@ model RepairRequest {
   timeline            RepairTimeline[]
 
   status              RepairStatus    @default(PENDING_REVIEW)
+  images              RepairImage[]
 
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
@@ -72,4 +78,20 @@ model RepairTimeline {
   note String?
 
   createdAt DateTime @default(now())
+}
+
+model RepairImage {
+
+  id String @id @default(uuid())
+
+  repairRequestId String
+
+  repairRequest RepairRequest @relation(fields:[repairRequestId],references:[id],onDelete:Cascade)
+
+  imageUrl String
+
+  uploadedBy AttachmentUploader
+
+  createdAt DateTime @default(now())
+
 }
