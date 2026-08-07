@@ -1,6 +1,8 @@
-import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
-
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+  
 import AdminLayout from "@/layouts/AdminLayout";
+import DashboardPage from "@/features/dashboard/DashboardPage";
+// import ProtectedRoutes from "@/routes/ProtectedRoutes";
 
 function Placeholder({ title }: { title: string }) {
   return (
@@ -18,7 +20,10 @@ export default function AppRoutes() {
             Public Routes
         ========================== */}
 
-        <Route path="/" element={<Placeholder title="Homepage" />} />
+        <Route
+          path="/"
+          element={<Placeholder title="Homepage" />}
+        />
 
         <Route
           path="/repair-request"
@@ -36,13 +41,21 @@ export default function AppRoutes() {
         />
 
         {/* =========================
-            Admin Routes
+            Protected Admin Routes
         ========================== */}
 
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route
+          path="/admin"
+          element={
+            // <ProtectedRoutes>
+             
+            // </ProtectedRoutes>
+             <AdminLayout />
+          }
+        >
           <Route
             index
-            element={<Placeholder title="Admin Dashboard" />}
+            element={<DashboardPage />}
           />
 
           <Route
@@ -65,7 +78,10 @@ export default function AppRoutes() {
             404
         ========================== */}
 
-        <Route path="*" element={<Navigate to="/" replace />} />
+        <Route
+          path="*"
+          element={<Navigate to="/" replace />}
+        />
       </Routes>
     </BrowserRouter>
   );
