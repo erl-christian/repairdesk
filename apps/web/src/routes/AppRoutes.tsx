@@ -1,46 +1,72 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+import { BrowserRouter, Navigate, Route, Routes } from "react-router-dom";
 
+import AdminLayout from "@/layouts/AdminLayout";
 
-function Placeholder({ title }: { title: string}){
-    return(
-        <div className="flex min-h-screen flex-col items-center justify-center">
-            <h1 className="text-3xl font-bold">{title}</h1>
-        </div>
-    )
+function Placeholder({ title }: { title: string }) {
+  return (
+    <div className="flex h-full flex-1 items-center justify-center">
+      <h1 className="text-3xl font-bold">{title}</h1>
+    </div>
+  );
 }
 
+export default function AppRoutes() {
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* =========================
+            Public Routes
+        ========================== */}
 
-function AppRoutes(){
-    return(
-        <BrowserRouter>
-            <Routes>
-                {/* Public Routes */}
-                    <Route path="/" element={<Placeholder title="Home Page" />} />
-                    <Route
-                    path="/repair-request"
-                    element={<Placeholder title="Repair Request Page" />}
-                    />
-                    <Route
-                    path="/track"
-                    element={<Placeholder title="Track Repair Page" />}
-                    />
+        <Route path="/" element={<Placeholder title="Homepage" />} />
 
-                    {/* Admin Routes */}
-                    <Route path="/login" element={<Placeholder title="Login Page" />} />
-                    <Route
-                    path="/admin"
-                    element={<Placeholder title="Admin Dashboard" />}
-                    />
-                    <Route
-                    path="/admin/repair-requests"
-                    element={<Placeholder title="Repair Requests" />}
-                    />
+        <Route
+          path="/repair-request"
+          element={<Placeholder title="Repair Request Form" />}
+        />
 
-                    {/* 404 */}
-                    <Route path="*" element={<Navigate to="/" replace />} />
-            </Routes>
-        </BrowserRouter>
-    )
+        <Route
+          path="/track"
+          element={<Placeholder title="Track Repair" />}
+        />
+
+        <Route
+          path="/login"
+          element={<Placeholder title="Login Page" />}
+        />
+
+        {/* =========================
+            Admin Routes
+        ========================== */}
+
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route
+            index
+            element={<Placeholder title="Admin Dashboard" />}
+          />
+
+          <Route
+            path="repair-requests"
+            element={<Placeholder title="Repair Requests" />}
+          />
+
+          <Route
+            path="timeline"
+            element={<Placeholder title="Timeline" />}
+          />
+
+          <Route
+            path="repair-notes"
+            element={<Placeholder title="Repair Notes" />}
+          />
+        </Route>
+
+        {/* =========================
+            404
+        ========================== */}
+
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
-
-export default AppRoutes;
