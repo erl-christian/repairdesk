@@ -1,8 +1,10 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-  
+
+// import ProtectedRoutes from "@/routes/ProtectedRoutes";
 import AdminLayout from "@/layouts/AdminLayout";
 import DashboardPage from "@/features/dashboard/DashboardPage";
-// import ProtectedRoutes from "@/routes/ProtectedRoutes";
+import RepairRequestsPage from "@/features/repair-request/RepairRequestsPage";
+
 
 function Placeholder({ title }: { title: string }) {
   return (
@@ -60,7 +62,7 @@ export default function AppRoutes() {
 
           <Route
             path="repair-requests"
-            element={<Placeholder title="Repair Requests" />}
+            element={<RepairRequestsPage />}
           />
 
           <Route

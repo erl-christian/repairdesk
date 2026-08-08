@@ -15,7 +15,7 @@ export const adminNavigation = [
     {
         label: "Repair Request",
         icon: Wrench,
-        to: "/admin/repair-request",
+        to: "/admin/repair-requests",
     },
     {
         label: "Timeline",
