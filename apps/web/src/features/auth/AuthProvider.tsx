@@ -1,4 +1,9 @@
-import { useMemo, useState, type ReactNode } from "react";
+import {
+  useMemo,
+  useState,
+  type ReactNode,
+} from "react";
+
 import { AuthContext } from "./auth-context";
 import type { AuthUser } from "./types";
 
@@ -6,46 +11,77 @@ type Props = {
   children: ReactNode;
 };
 
-export const AuthProvider = ({ children }: Props) => {
-    const storedToken = typeof window !== "undefined"
-        ? window.localStorage.getItem("token")
-        : null;
+export const AuthProvider = ({
+  children,
+}: Props) => {
+  const [token, setToken] = useState<string | null>(
+    () => {
+      if (typeof window === "undefined") {
+        return null;
+      }
 
-    const [token, setToken] = useState<string | null>(() => {
-        if (typeof window === "undefined") return null
-        return window.localStorage.getItem("token")
-    })
+      return window.localStorage.getItem("token");
+    }
+  );
 
-    const [user, setUser] = useState<AuthUser | null>(
-        storedToken
-            ? {
-                username: "Admin",
-            }
-            : null
-        );
+  const [user, setUser] = useState<AuthUser | null>(
+    () => {
+      if (typeof window === "undefined") {
+        return null;
+      }
 
-    const login = (jwt: string) => {
-        localStorage.setItem("token", jwt);
+      const storedUser =
+        window.localStorage.getItem("user");
 
-        setToken(jwt);
-        setUser({
-            username: "Admin",
-        });
-    };
+      if (!storedUser) {
+        return null;
+      }
 
-    const logout = () => {
-        localStorage.removeItem("token");
-        setToken(null);
-        setUser(null);
-    };
+      try {
+        return JSON.parse(storedUser) as AuthUser;
+      } catch {
+        window.localStorage.removeItem("user");
+        return null;
+      }
+    }
+  );
 
-    const value = useMemo(() => ({
-        token,
-        user,
-        login,
-        logout,
-        isAuthenticated: !!token,
-    }),[token, user],);
+  const login = (
+    jwt: string,
+    authUser: AuthUser
+  ) => {
+    localStorage.setItem("token", jwt);
+    localStorage.setItem(
+      "user",
+      JSON.stringify(authUser)
+    );
 
-    return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+    setToken(jwt);
+    setUser(authUser);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+
+    setToken(null);
+    setUser(null);
+  };
+
+  const value = useMemo(
+    () => ({
+      token,
+      user,
+      login,
+      logout,
+      isAuthenticated: Boolean(token),
+    }),
+    [token, user]
+  );
+
+  return (
+    <AuthContext.Provider value={value}>
+      {children}
+    </AuthContext.Provider>
+  );
 };

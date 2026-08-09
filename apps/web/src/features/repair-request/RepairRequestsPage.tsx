@@ -5,12 +5,16 @@ import { Button } from "@/components/ui/button";
 
 import RepairRequestFilters from "./components/StatusFilter";
 import RepairRequestsTable from "./components/RepairRequestsTable";
+import RepairRequestDetailsModal from "./RepairRequestDetailsModal";
 import { useRepairRequests } from "./hooks";
 
 export default function RepairRequestsPage() {
   const [search, setSearch] = useState("");
   const [status, setStatus] = useState("");
   const [page, setPage] = useState(1);
+  
+  // State to manage which repair request is currently open in the modal
+  const [selectedRepairId, setSelectedRepairId] = useState<string | null>(null);
 
   const limit = 10;
 
@@ -27,7 +31,6 @@ export default function RepairRequestsPage() {
   });
 
   const pagination = data?.pagination;
-
   const totalPages = pagination?.totalPages ?? 1;
 
   const handleSearchChange = (value: string) => {
@@ -41,15 +44,11 @@ export default function RepairRequestsPage() {
   };
 
   const goToPreviousPage = () => {
-    setPage((currentPage) =>
-      Math.max(currentPage - 1, 1)
-    );
+    setPage((currentPage) => Math.max(currentPage - 1, 1));
   };
 
   const goToNextPage = () => {
-    setPage((currentPage) =>
-      Math.min(currentPage + 1, totalPages)
-    );
+    setPage((currentPage) => Math.min(currentPage + 1, totalPages));
   };
 
   if (isLoading) {
@@ -79,7 +78,6 @@ export default function RepairRequestsPage() {
         <h1 className="text-3xl font-bold">
           Repair Requests
         </h1>
-
         <p className="text-muted-foreground">
           View and manage customer repair requests.
         </p>
@@ -94,19 +92,26 @@ export default function RepairRequestsPage() {
       />
 
       {/* Table */}
-      <div className={isFetching ? "opacity-60" : ""}>
+      <div className={isFetching ? "opacity-60 transition-opacity duration-200" : "transition-opacity duration-200"}>
         <RepairRequestsTable
           repairs={data?.repairRequests ?? []}
+          onViewDetails={(id) => setSelectedRepairId(id)}
         />
       </div>
+
+      {/* Details Modal */}
+      <RepairRequestDetailsModal
+        repairId={selectedRepairId}
+        isOpen={!!selectedRepairId}
+        onClose={() => setSelectedRepairId(null)}
+      />
 
       {/* Pagination */}
       {pagination && pagination.totalItems > 0 && (
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           {/* Results information */}
           <p className="text-sm text-muted-foreground">
-            Page {pagination.page} of{" "}
-            {pagination.totalPages} ·{" "}
+            Page {pagination.page} of {pagination.totalPages} ·{" "}
             {pagination.totalItems} total requests
           </p>
 
@@ -126,9 +131,7 @@ export default function RepairRequestsPage() {
               variant="outline"
               size="sm"
               onClick={goToNextPage}
-              disabled={
-                page >= totalPages || isFetching
-              }
+              disabled={page >= totalPages || isFetching}
             >
               Next
               <ChevronRight className="ml-1 size-4" />

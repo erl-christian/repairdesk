@@ -1,24 +1,25 @@
-export interface LoginRequest {
-    username: string
-    password: string
+export interface AuthUser {
+  id: string;
+  username: string;
+  email: string;
+}
+
+export interface LoginPayload {
+  username: string;
+  password: string;
 }
 
 export interface LoginResponse {
   success: boolean;
   message: string;
   token: string;
-}
-
-export interface AuthUser {
-  username: string;
+  admin: AuthUser;
 }
 
 export interface AuthContextType {
-    user: AuthUser | null
-    token: string | null
-
-    login: (token: string ) => void
-    logout: () => void
-
-    isAuthenticated: boolean
+  token: string | null;
+  user: AuthUser | null;
+  isAuthenticated: boolean;
+  login: (token: string, user: AuthUser) => void;
+  logout: () => void;
 }

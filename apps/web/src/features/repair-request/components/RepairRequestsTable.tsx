@@ -6,24 +6,21 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-
+import { Eye } from "lucide-react";
+import { Button } from "@/components/ui/button";
 import type { RepairRequest } from "../types";
-
 import RepairStatusBadge from "./RepairStatusBadge";
 
 type Props = {
   repairs: RepairRequest[];
+  onViewDetails: (id: string) => void; // Added prop for modal
 };
 
-export default function RepairRequestsTable({
-  repairs,
-}: Props) {
+export default function RepairRequestsTable({ repairs, onViewDetails }: Props) {
   if (repairs.length === 0) {
     return (
       <div className="rounded-lg border p-8 text-center">
-        <p className="text-muted-foreground">
-          No repair requests found.
-        </p>
+        <p className="text-muted-foreground">No repair requests found.</p>
       </div>
     );
   }
@@ -39,46 +36,39 @@ export default function RepairRequestsTable({
             <TableHead>Municipality</TableHead>
             <TableHead>Status</TableHead>
             <TableHead>Created</TableHead>
+            <TableHead>Actions</TableHead>
           </TableRow>
         </TableHeader>
 
         <TableBody>
           {repairs.map((repair) => (
             <TableRow key={repair.id}>
-              <TableCell className="font-medium">
-                {repair.publicTicketNumber}
-              </TableCell>
-
-              <TableCell>
-                {repair.customerName}
-              </TableCell>
-
+              <TableCell className="font-medium">{repair.publicTicketNumber}</TableCell>
+              <TableCell>{repair.customerName}</TableCell>
               <TableCell>
                 <div>
                   <p className="font-medium">
                     {repair.deviceBrand} {repair.deviceModel}
                   </p>
-
-                  <p className="text-xs text-muted-foreground">
-                    {repair.deviceType}
-                  </p>
+                  <p className="text-xs text-muted-foreground">{repair.deviceType}</p>
                 </div>
               </TableCell>
-
+              <TableCell>{repair.municipality}</TableCell>
               <TableCell>
-                {repair.municipality}
+                <RepairStatusBadge status={repair.status} />
               </TableCell>
-
               <TableCell>
-                <RepairStatusBadge
-                  status={repair.status}
-                />
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={() => onViewDetails(repair.id)}
+                >
+                  <Eye className="mr-2 size-4" />
+                  View
+                </Button>
               </TableCell>
-
               <TableCell>
-                {new Date(
-                  repair.createdAt
-                ).toLocaleDateString()}
+                {new Date(repair.createdAt).toLocaleDateString()}
               </TableCell>
             </TableRow>
           ))}
