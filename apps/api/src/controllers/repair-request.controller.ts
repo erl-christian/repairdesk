@@ -11,18 +11,23 @@ export class RepairRequestController {
   async create(req: Request, res: Response) {
     try {
       const validateData = createRepairRequestSchema.parse(req.body);
+
       const files = req.files as Express.Multer.File[];
-      const repairRequest = await repairRequestService.createRepairRequest(
-        validateData,
-        files
-      );
+
+      const repairRequest =
+        await repairRequestService.createRepairRequest(
+          validateData,
+          files
+        );
+
       return res.status(201).json({
         success: true,
-        message: "Repair Request submitted succesfully",
+        message: "Repair Request submitted successfully",
         data: repairRequest,
       });
     } catch (e) {
       console.log(e);
+
       return res.status(400).json({
         success: false,
         message: "Invalid Request data",
@@ -33,25 +38,60 @@ export class RepairRequestController {
 
   async track(req: Request, res: Response) {
     try {
-      const { ticketNumber, phoneNumber } = trackRepairSchema.parse(req.body);
-      const repairRequest = await repairRequestService.trackRepairRequest(
-        ticketNumber,
-        phoneNumber,
-      );
+      const { ticketNumber, phoneNumber } =
+        trackRepairSchema.parse(req.body);
+
+      const repairRequest =
+        await repairRequestService.trackRepairRequest(
+          ticketNumber,
+          phoneNumber
+        );
 
       return res.status(200).json({
         success: true,
         data: {
           ticketNumber: repairRequest.publicTicketNumber,
+
           customerName: repairRequest.customerName,
+
+          phoneNumber: repairRequest.phoneNumber,
+          email: repairRequest.email,
+
           deviceType: repairRequest.deviceType,
           deviceBrand: repairRequest.deviceBrand,
           deviceModel: repairRequest.deviceModel,
+
+          problemDescription: repairRequest.problemDescription,
+
+          serviceMethod: repairRequest.serviceMethod,
+          municipality: repairRequest.municipality,
+
+          preferredDate: repairRequest.preferredDate,
+          preferredTime: repairRequest.preferredTime,
+
           status: repairRequest.status,
+
           createdAt: repairRequest.createdAt,
+          updatedAt: repairRequest.updatedAt,
+
+          notes: repairRequest.notes.map((note) => ({
+            id: note.id,
+            note: note.note,
+            createdAt: note.createdAt,
+            updatedAt: note.updatedAt,
+          })),
+
+          timeline: repairRequest.timeline.map((event) => ({
+            id: event.id,
+            status: event.status,
+            note: event.note,
+            createdAt: event.createdAt,
+          })),
         },
       });
     } catch (e) {
+      console.log(e);
+
       return res.status(404).json({
         success: false,
         message: "Invalid ticket number or phone number",
@@ -63,7 +103,9 @@ export class RepairRequestController {
   async findAll(req: Request, res: Response) {
     try {
       const query = repairRequestQuerySchema.parse(req.query);
-      const result = await repairRequestService.getAllRepairRequest(query);
+
+      const result =
+        await repairRequestService.getAllRepairRequest(query);
 
       return res.status(200).json({
         success: true,
@@ -80,9 +122,10 @@ export class RepairRequestController {
 
   async findOne(req: Request, res: Response) {
     try {
-      const repairRequest = await repairRequestService.getRepairRequestById(
-        req.params.id as string,
-      );
+      const repairRequest =
+        await repairRequestService.getRepairRequestById(
+          req.params.id as string
+        );
 
       return res.status(200).json({
         success: true,
@@ -99,19 +142,24 @@ export class RepairRequestController {
 
   async updateStatus(req: Request, res: Response) {
     try {
-      const { status, note } = updateRepairStatusSchema.parse(req.body);
-      const repairRequest = await repairRequestService.updateRepairStatus(
-        req.params.id as string,
-        status,
-        note,
-      );
+      const { status, note } =
+        updateRepairStatusSchema.parse(req.body);
+
+      const repairRequest =
+        await repairRequestService.updateRepairStatus(
+          req.params.id as string,
+          status,
+          note
+        );
 
       return res.status(200).json({
         success: true,
-        message: "Repair status updated succesfully",
+        message: "Repair status updated successfully",
         data: repairRequest,
       });
     } catch (e) {
+      console.log(e);
+
       return res.status(400).json({
         success: false,
         message: "Invalid request data",

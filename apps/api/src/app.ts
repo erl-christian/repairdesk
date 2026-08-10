@@ -26,7 +26,10 @@ app.use("/api/v1/dashboard", dashboardroutes)
 app.use("/api/v1/auth", authRoutes)
 app.use("/api/v1", repairNoteRoutes);
 
-app.listen(3000)
+app.listen(5000, () => {
+  console.log("RepairDesk API running on http://localhost:5000");
+});
+
 
 
 
