@@ -6,6 +6,7 @@ import type {
   RepairRequestsResponse,
   UpdateRepairRequestStatusPayload,
   UpdateRepairRequestStatusResponse,
+  RepairTimelineItem 
 } from "./types";
 
 export async function getRepairRequests(
@@ -43,3 +44,14 @@ export async function updateRepairRequestStatus(
 
   return data;
 }
+
+export async function getRepairTimeline(
+  repairRequestId: string
+): Promise<RepairTimelineItem[]> {
+  const response = await api.get(
+    `/repair-requests/${repairRequestId}/timeline`
+  );
+
+  return response.data.data;
+}
+

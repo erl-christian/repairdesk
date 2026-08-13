@@ -56,3 +56,10 @@ export interface UpdateRepairRequestStatusResponse {
   message?: string;
   data: RepairRequest;
 }
+
+export interface RepairTimelineItem {
+  id: string;
+  status: string;
+  note?: string | null;
+  createdAt: string;
+}

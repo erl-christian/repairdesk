@@ -8,6 +8,7 @@ import {
   getRepairRequestById,
   getRepairRequests,
   updateRepairRequestStatus,
+  getRepairTimeline
 } from "./api";
 
 import type {
@@ -60,5 +61,16 @@ export function useUpdateRepairRequestStatus(
         queryKey: ["dashboard-stats"],
       });
     },
+  });
+}
+
+export function useRepairTimeline(
+  repairRequestId?: string,
+  enabled = true
+) {
+  return useQuery({
+    queryKey: ["repair-timeline", repairRequestId],
+    queryFn: () => getRepairTimeline(repairRequestId!),
+    enabled: Boolean(repairRequestId) && enabled,
   });
 }
