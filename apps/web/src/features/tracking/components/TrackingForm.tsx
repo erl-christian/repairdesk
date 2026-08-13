@@ -9,15 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-type TrackingResult = {
-  ticketNumber: string;
-  customerName: string;
-  deviceType: string;
-  deviceBrand: string | null;
-  deviceModel: string | null;
-  status: string;
-  createdAt: string;
-};
+import type { TrackingResult } from "../TrackingPage";
 
 type TrackingFormProps = {
   onSuccess: (data: TrackingResult) => void;
@@ -40,7 +32,9 @@ export default function TrackingForm({
     setError("");
 
     if (!ticketNumber.trim() || !phoneNumber.trim()) {
-      setError("Please enter your ticket number and phone number.");
+      setError(
+        "Please enter your ticket number and phone number."
+      );
       return;
     }
 
@@ -48,7 +42,10 @@ export default function TrackingForm({
       setIsLoading(true);
 
       const response = await fetch(
-        `${import.meta.env.VITE_API_URL || "http://localhost:5000/api/v1"}/repair-requests/track`,
+        `${
+          import.meta.env.VITE_API_URL ||
+          "http://localhost:5000/api/v1"
+        }/repair-requests/track`,
         {
           method: "POST",
           headers: {
@@ -97,7 +94,10 @@ export default function TrackingForm({
       </CardHeader>
 
       <CardContent>
-        <form onSubmit={handleSubmit} className="space-y-5">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-5"
+        >
           {/* Ticket Number */}
           <div className="space-y-2">
             <label
