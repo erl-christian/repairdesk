@@ -4,6 +4,7 @@ import repairRequestRoutes from "./routes/repair-request.route"
 import dashboardroutes from "./routes/dashboard.routes"
 import repairTimelineRoutes from "./routes/repair-timeline.routes"
 import authRoutes from "./auth/auth.routes"
+import repairNoteRoutes from "./routes/repair-notes.routes";
 
 
 
@@ -23,8 +24,12 @@ app.use("/api/v1/repair-requests", repairRequestRoutes)
 app.use("/api/v1/repair-requests", repairTimelineRoutes)
 app.use("/api/v1/dashboard", dashboardroutes)
 app.use("/api/v1/auth", authRoutes)
+app.use("/api/v1", repairNoteRoutes);
 
-app.listen(3000)
+app.listen(5000, () => {
+  console.log("RepairDesk API running on http://localhost:5000");
+});
+
 
 
 

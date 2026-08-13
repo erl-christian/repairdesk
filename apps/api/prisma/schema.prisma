@@ -52,6 +52,7 @@ model RepairRequest {
 
   status              RepairStatus    @default(PENDING_REVIEW)
   images              RepairImage[]
+  notes               RepairNote[]
 
   createdAt           DateTime        @default(now())
   updatedAt           DateTime        @updatedAt
@@ -94,4 +95,17 @@ model RepairImage {
 
   createdAt DateTime @default(now())
 
+}
+
+model RepairNote {
+  id String @id @default(uuid())
+
+  repairRequestId String
+
+  repairRequest RepairRequest @relation(fields: [repairRequestId], references: [id], onDelete: Cascade)
+
+  note String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

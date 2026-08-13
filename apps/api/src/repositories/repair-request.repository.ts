@@ -6,11 +6,7 @@ import { Prisma } from "../generated/prisma/client";
 
 export class RepairRequestRepository {
 
-  async create(
-    data: CreateRepairRequestDto & {
-      publicTicketNumber: string;
-    },
-  ) {
+   async create(data: Prisma.RepairRequestCreateInput) {
     return await prisma.repairRequest.create({
       data,
     });
@@ -29,6 +25,18 @@ export class RepairRequestRepository {
       where: {
         publicTicketNumber: ticketNumber,
         phoneNumber,
+      },
+      include: {
+        notes: {
+          orderBy: {
+            createdAt: "desc",
+          },
+        },
+        timeline: {
+          orderBy: {
+            createdAt: "asc",
+          },
+        },
       },
     });
   }

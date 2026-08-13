@@ -5,6 +5,7 @@ import { repairTimelineService } from "./repair-timeline.service";
 import { CreateRepairRequestDto } from "../validators/repair-request.validator";
 import { uploadBuffer } from "../services/repair-image.service";
 import { RepairImageRepository } from "../repositories/repair-image.repository";
+import { emailService } from "../services/email.service";
 
 
 export class RepairRequestService {
@@ -20,31 +21,68 @@ export class RepairRequestService {
     return `RD-BHL-${year}-${random}`;
   }
 
-  async createRepairRequest(data: CreateRepairRequestDto, files: Express.Multer.File[]) {
+  async createRepairRequest(
+    data: CreateRepairRequestDto,
+    files: Express.Multer.File[]
+  ) { 
     const publicTicketNumber = this.generateTicketNumber();
 
     const repairRequest = await this.repository.create({
-      ...data,
+      customerName: data.customerName,
+      phoneNumber: data.phoneNumber,
+      email: data.email || null,
+
+      deviceType: data.deviceType,
+      deviceBrand: data.deviceBrand || null,
+      deviceModel: data.deviceModel || null,
+
+      problemDescription: data.problemDescription,
+
+      serviceMethod: data.serviceMethod,
+
+      municipality: data.municipality,
+
+      preferredDate: data.preferredDate
+        ? new Date(data.preferredDate)
+        : null,
+
+      preferredTime: data.preferredTime || null,
+
       publicTicketNumber,
     });
 
     if (files && files.length > 0) {
       const urls: string[] = [];
+
       for (const file of files) {
         const url = await uploadBuffer(file.buffer);
         urls.push(url);
       }
+
       await this.imageRepository.createMany(
         repairRequest.id,
         urls,
-        "CUSTOMER" 
+        "CUSTOMER"
       );
     }
+
     await repairTimelineService.createTimeline(
       repairRequest.id,
       repairRequest.status,
-      "Repair request submitted.",
+      "Repair request submitted."
     );
+
+    if (repairRequest.email) {
+      try {
+        await emailService.sendRepairRequestCreatedEmail({
+          to: repairRequest.email,
+          customerName: repairRequest.customerName,
+          ticketNumber: repairRequest.publicTicketNumber,
+        });
+      } catch (error) {
+        console.error("Failed to send repair request email:", error);
+      }
+    }
 
     return repairRequest;
   }
@@ -80,13 +118,43 @@ export class RepairRequestService {
     return repairRequest;
   }
 
-  async updateRepairStatus(id: string, status: RepairStatus, note?: string) {
+  async updateRepairStatus(
+    id: string,
+    status: RepairStatus,
+    note?: string
+  ) {
     await this.getRepairRequestById(id);
 
-    const repairRequest = await this.repository.updateStatus(id, status);
+    const updatedRequest = await this.repository.updateStatus(
+      id,
+      status
+    );
 
-    await repairTimelineService.createTimeline(repairRequest.id, status, note);
+    await repairTimelineService.createTimeline(
+      updatedRequest.id,
+      status,
+      note
+    );
 
-    return repairRequest;
+    if (updatedRequest.email) {
+      try {
+        await emailService.sendRepairStatusUpdatedEmail({
+          to: updatedRequest.email,
+          customerName: updatedRequest.customerName,
+          ticketNumber: updatedRequest.publicTicketNumber,
+          status: updatedRequest.status,
+          note,
+        });
+      } catch (error) {
+        console.error(
+          "Failed to send repair status email:",
+          error
+        );
+      }
+    }
+
+    return updatedRequest;
   }
+
+  
 }
